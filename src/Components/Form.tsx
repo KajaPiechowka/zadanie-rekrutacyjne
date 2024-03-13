@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { validateField } from "../utils/formHelpers";
 import { useSuccessMessage } from "../hooks/useSuccessMessage";
 interface FieldState {
@@ -28,6 +28,25 @@ export const Form = () => {
     department: { value: "", touched: false, validationMessage: null },
     termsOfUse: { value: false, touched: false, validationMessage: null },
   });
+  const [departments, setDepartments] = useState<
+    { id: string; name: string }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      const response = await fetch(
+        "https://ddh-front-default-rtdb.europe-west1.firebasedatabase.app/departments.json"
+      );
+      const data = await response.json();
+      const loadedDepartments = Object.keys(data).map((key) => ({
+        id: key,
+        name: data[key].name,
+      }));
+      setDepartments(loadedDepartments);
+    };
+
+    fetchDepartments();
+  }, []);
   const { SuccessMessageComponent, showMessage } = useSuccessMessage();
 
   const handleChange = (
@@ -207,9 +226,11 @@ export const Form = () => {
           <option value="" disabled selected hidden>
             Wybierz oddział
           </option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
+          {departments.map((dept) => (
+            <option key={dept.id} value={dept.id}>
+              {dept.name}
+            </option>
+          ))}
         </select>
         {formData.department.touched &&
           formData.department.validationMessage && (
