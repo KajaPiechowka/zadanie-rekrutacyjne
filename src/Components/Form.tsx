@@ -61,7 +61,7 @@ export const Form = () => {
       [name]: {
         ...prevFormData[name as keyof FormData],
         value: newValue,
-        validationMessage: validateField(name, newValue), // Assuming you have a validateField function
+        validationMessage: validateField(name, newValue),
       },
     }));
   };
